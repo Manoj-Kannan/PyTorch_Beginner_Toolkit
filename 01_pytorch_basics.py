@@ -74,3 +74,98 @@ tensor = torch.from_numpy(np_array)
 np_array_again = (
     tensor.numpy()
 )  # np_array_again will be same as np_array (perhaps with numerical round offs)
+
+# =============================================================================== #
+#                        Tensor Math & Comparison Operations                      #
+# =============================================================================== #
+
+x = torch.tensor([1, 2, 3])
+y = torch.tensor([9, 8, 7])
+
+# -- Addition --
+z1 = torch.empty(3)
+torch.add(x, y, out=z1)  # This is one way
+z2 = torch.add(x, y)  # This is another way
+z = x + y  # This is my preferred way, simple and clean.
+
+# -- Subtraction --
+z = x - y  # We can do similarly as the preferred way of addition
+
+# -- Division (A bit clunky) --
+z = torch.true_divide(x, y)  # Will do element wise division if of equal shape
+
+# -- Inplace Operations --
+t = torch.zeros(3)
+
+t.add_(x)  # Whenever we have operation followed by _ it will mutate the tensor in place
+t += x  # Also inplace: t = t + x is not inplace, bit confusing.
+
+# -- Exponentiation (Element wise if vector or matrices) --
+z = x.pow(2)  # z = [1, 4, 9]
+z = x ** 2  # z = [1, 4, 9]
+
+
+# -- Simple Comparison --
+z = x > 0  # Returns [True, True, True]
+z = x < 0  # Returns [False, False, False]
+
+# -- Matrix Multiplication --
+x1 = torch.rand((2, 5))
+x2 = torch.rand((5, 3))
+x3 = torch.mm(x1, x2)  # Matrix multiplication of x1 and x2, out shape: 2x3
+x3 = x1.mm(x2)  # Similar as line above
+
+# -- Matrix Exponentiation --
+matrix_exp = torch.rand(5, 5)
+print(
+    matrix_exp.matrix_power(3)
+)  # is same as matrix_exp (mm) matrix_exp (mm) matrix_exp
+
+# -- Element wise Multiplication --
+z = x * y  # z = [9, 16, 21] = [1*9, 2*8, 3*7]
+
+# -- Dot product --
+z = torch.dot(x, y)  # Dot product, in this case z = 1*9 + 2*8 + 3*7
+
+# -- Batch Matrix Multiplication --
+batch = 32
+n = 10
+m = 20
+p = 30
+tensor1 = torch.rand((batch, n, m))
+tensor2 = torch.rand((batch, m, p))
+out_bmm = torch.bmm(tensor1, tensor2)  # Will be shape: (b x n x p)
+
+# -- Example of broadcasting --
+x1 = torch.rand((5, 5))
+x2 = torch.ones((1, 5))
+z = (
+    x1 - x2
+)  # Shape of z is 5x5: How? The 1x5 vector (x2) is subtracted for each row in the 5x5 (x1)
+z = (
+    x1 ** x2
+)  # Shape of z is 5x5: How? Broadcasting! Element wise exponentiation for every row
+
+# Other useful tensor operations
+sum_x = torch.sum(
+    x, dim=0
+)  # Sum of x across dim=0 (which is the only dim in our case), sum_x = 6
+values, indices = torch.max(x, dim=0)  # Can also do x.max(dim=0)
+values, indices = torch.min(x, dim=0)  # Can also do x.min(dim=0)
+abs_x = torch.abs(x)  # Returns x where abs function has been applied to every element
+z = torch.argmax(x, dim=0)  # Gets index of the maximum value
+z = torch.argmin(x, dim=0)  # Gets index of the minimum value
+mean_x = torch.mean(x.float(), dim=0)  # mean requires x to be float
+z = torch.eq(x, y)  # Element wise comparison, in this case z = [False, False, False]
+sorted_y, indices = torch.sort(y, dim=0, descending=False)
+
+z = torch.clamp(x, min=0)
+# All values < 0 set to 0 and values > 0 unchanged (this is exactly ReLU function)
+# If you want to values over max_val to be clamped, do torch.clamp(x, min=min_val, max=max_val)
+
+x = torch.tensor([1, 0, 1, 1, 1], dtype=torch.bool)  # True/False values
+z = torch.any(x)  # Tests if any element in input evaluates to True.
+# Tests if all elements in input evaluate to True.
+z = torch.all(
+    x
+)  # will return False (since not all are True), can also do x.all() instead of torch.all()
