@@ -169,3 +169,55 @@ z = torch.any(x)  # Tests if any element in input evaluates to True.
 z = torch.all(
     x
 )  # will return False (since not all are True), can also do x.all() instead of torch.all()
+
+# ============================================================= #
+#                        Tensor Indexing                        #
+# ============================================================= #
+
+batch_size = 10
+features = 25
+x = torch.rand((batch_size, features))
+
+# Get first examples features
+print(x[0].shape)  # shape [25], this is same as doing x[0,:]
+
+# Get the first feature for all examples
+print(x[:, 0].shape)  # shape [10]
+
+# For example: Want to access third example in the batch and the first ten features
+print(x[2, 0:10].shape)  # shape: [10]
+
+# For example we can use this to, assign certain elements
+x[0, 0] = 100
+
+# Fancy Indexing
+x = torch.arange(10)
+indices = [2, 5, 8]
+print(x[indices])  # x[indices] = [2, 5, 8]
+
+x = torch.rand((3, 5))
+rows = torch.tensor([1, 0])
+cols = torch.tensor([4, 0])
+print(x[rows, cols])  # Gets second row fifth column and first row first column
+
+# More advanced indexing
+x = torch.arange(10)
+print(x[(x < 2) | (x > 8)])  # will be [0, 1, 9]
+print(x[x.remainder(2) == 0])  # will be [0, 2, 4, 6, 8]
+
+# Useful operations for indexing
+# Return a tensor of elements selected from either x or y, depending on condition.
+# The operation is defined as:
+# out[i] = x[i] - if condition is True
+#        = y[i] - if condition is False
+print(
+    torch.where(x > 5, x, x * 2)
+)  # gives [0, 2, 4, 6, 8, 10, 6, 7, 8, 9], all values x > 5 yield x, else x*2
+x = torch.tensor([0, 0, 1, 2, 2, 3, 4]).unique()  # x = [0, 1, 2, 3, 4]
+print(
+    x.ndimension()
+)  # The number of dimensions, in this case 1. if x.shape is 5x5x5 ndim would be 3
+x = torch.arange(10)
+print(
+    x.numel()
+)  # The number of elements in x (in this case it's trivial because it's just a vector)
