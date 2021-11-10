@@ -57,3 +57,25 @@ model = NN(input_size=input_size, num_classes=num_classes).to(device)
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+# Train Network
+for epoch in range(num_epochs):
+    for batch_idx, (data, targets) in enumerate(tqdm(train_loader)):
+        # Get data to cuda if possible
+        data = data.to(device=device)
+        targets = targets.to(device=device)
+
+        # Get to correct shape - (batch_size, 784)
+        # initially the shape of tensor is (64, 1, 28, 28) --> (64, 1*28*28)
+        data = data.reshape(data.shape[0], -1)
+
+        # forward
+        scores = model(data)
+        loss = criterion(scores, targets)
+
+        # backward
+        optimizer.zero_grad()
+        loss.backward()
+
+        # gradient descent or adam step
+        optimizer.step()
