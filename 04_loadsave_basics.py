@@ -48,3 +48,15 @@ print("Optimizer's state_dict:")
 for var_name in optimizer.state_dict():
     print(var_name, "\t", optimizer.state_dict()[var_name])
 #---------------------------------------------------------------------#
+PATH = 'checkpoints/trial1_checkpoint.pth'
+
+# Save/Load state_dict (Recommended)
+# Used to call model.eval()
+# Save:
+torch.save(model.state_dict(), PATH)
+
+# Load:
+model = TheModelClass()
+model.load_state_dict(torch.load(PATH))
+model.eval()
+#---------------------------------------------------------------------#
