@@ -60,3 +60,15 @@ model = TheModelClass()
 model.load_state_dict(torch.load(PATH))
 model.eval()
 #---------------------------------------------------------------------#
+PATH = 'checkpoints/trial2_checkpoint.pth'
+
+# Save/Load Entire Model:
+# Used to call model.eval()
+# Save:
+torch.save(model, PATH)
+
+# Load:
+# Model class must be defined somewhere
+model = torch.load(PATH)
+model.eval()
+#---------------------------------------------------------------------#
