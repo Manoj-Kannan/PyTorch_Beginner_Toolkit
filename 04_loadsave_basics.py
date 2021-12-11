@@ -72,3 +72,29 @@ torch.save(model, PATH)
 model = torch.load(PATH)
 model.eval()
 #---------------------------------------------------------------------#
+PATH = 'checkpoints/trial3_checkpoint.pth'
+
+# Save and Load as and From Checkpoint
+# Used to call model.eval() and model.train()
+# Save:
+torch.save({
+            'epoch': EPOCH,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'loss': LOSS,
+            }, PATH)
+
+# Load:
+model = TheModelClass()
+optimizer = TheOptimizerClass()
+
+checkpoint = torch.load(PATH)
+model.load_state_dict(checkpoint['model_state_dict'])
+optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+epoch = checkpoint['epoch']
+loss = checkpoint['loss']
+
+model.eval()
+# - or -
+model.train()
+#---------------------------------------------------------------------#
