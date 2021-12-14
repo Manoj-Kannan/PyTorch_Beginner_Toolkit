@@ -95,3 +95,29 @@ for epoch in range(num_epochs):
     print(f"Cost at epoch {epoch} is {sum(losses)/len(losses):.5f}")
 
 # Check accuracy on training & test to see how good our model
+def check_accuracy(loader, model):
+    num_correct = 0
+    num_samples = 0
+    model.eval()
+
+    with torch.no_grad():
+        for x, y in loader:
+            x = x.to(device=device)
+            y = y.to(device=device)
+            x = x.reshape(x.shape[0], -1)
+
+            scores = model(x)
+            # torch.max() returns (values, indices) of maximum elements
+            # in a classification problem, we analyse the output as only 0 or 1. So, just get the indices for analysis.
+            _ , predictions = scores.max(1)
+            num_correct += (predictions == y).sum()
+            num_samples += predictions.size(0)
+
+        print(
+            f"Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}"
+        )
+
+    model.train()
+
+check_accuracy(train_loader, model)
+check_accuracy(test_loader, model)
