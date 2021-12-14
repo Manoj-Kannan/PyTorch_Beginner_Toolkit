@@ -29,3 +29,34 @@ class NN(nn.Module):
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
         return x
+
+def save_checkpoint(state):
+print('=>Saving Checkpoint...')
+torch.save(state, path)
+
+def load_checkpoint(checkpoint):
+    print('=>Loading Checkpoint...')
+    model.load_state_dict(checkpoint['state_dict'])
+    optimizer.load_state_dict(checkpoint['optimizer'])
+
+# Hyperparameters
+input_size = 784
+num_classes = 10
+learning_rate = 1e-4
+batch_size = 1024
+num_epochs = 10
+path = 'checkpoints/mnist_checkpoint.pth.tar'
+load_model = True
+
+# Load Training and Test data
+train_dataset = datasets.MNIST(root="dataset/", train=True, transform=transforms.ToTensor(), download=True)
+test_dataset = datasets.MNIST(root="dataset/", train=False, transform=transforms.ToTensor(), download=True)
+train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
+test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=True)
+
+# Initialize network
+model = NN(input_size=input_size, num_classes=num_classes).to(device)
+
+# Loss and optimizer
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=learning_rate)
