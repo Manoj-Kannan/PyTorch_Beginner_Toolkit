@@ -60,3 +60,38 @@ model = NN(input_size=input_size, num_classes=num_classes).to(device)
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+if load_model:
+    load_checkpoint(torch.load(path))
+
+# Train Network
+for epoch in range(num_epochs):
+    losses = []
+
+    if epoch%3 == 0 :
+        checkpoint = {'state_dict':model.state_dict(), 'optimizer':optimizer.state_dict()}
+        save_checkpoint(checkpoint)
+
+    for batch_idx, (data, targets) in enumerate(train_loader):
+        # Get data to cuda if possible
+        data = data.to(device=device)
+        targets = targets.to(device=device)
+
+        # Get to correct shape - (batch_size, 784)
+        # initially the shape of tensor is (64, 1, 28, 28) --> (64, 1*28*28)
+        data = data.reshape(data.shape[0], -1)
+
+        # forward
+        scores = model(data)
+        loss = criterion(scores, targets)
+        losses.append(loss.item())
+        # backward
+        optimizer.zero_grad()
+        loss.backward()
+
+        # gradient descent or adam step
+        optimizer.step()
+
+    print(f"Cost at epoch {epoch} is {sum(losses)/len(losses):.5f}")
+
+# Check accuracy on training & test to see how good our model
